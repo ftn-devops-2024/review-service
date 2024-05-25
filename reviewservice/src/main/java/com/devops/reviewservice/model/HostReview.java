@@ -31,4 +31,12 @@ public class HostReview {
     private int rating;
 
     private LocalDateTime date;
+
+    public HostReview(long hostId, long guestId, int rating, LocalDateTime date) {
+        this.hostId = hostId;
+        this.guestId = guestId;
+        this.rating = rating;
+        this.date = date;
+
+    }
 }
