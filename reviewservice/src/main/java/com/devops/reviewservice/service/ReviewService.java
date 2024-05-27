@@ -24,12 +24,12 @@ public class ReviewService {
         if (existingReview.isPresent()) {
             throw new IllegalArgumentException("Guest has already reviewed this host.");
         }
-        // Here you should check if the guest had a past reservation with the host which was not cancelled
+        //check if the guest had a past reservation with the host which was not cancelled
         return hostReviewRepository.save(hostReview);
     }
 
     public HostReview updateHostReview(Long id, HostReview updatedReview) {
-        Optional<HostReview> existingReview = hostReviewRepository.findById(id);
+        Optional<HostReview> existingReview = hostReviewRepository.findByHostIdAndGuestId(id, updatedReview.getGuestId());
         if (existingReview.isPresent() && existingReview.get().getGuestId().equals(updatedReview.getGuestId())) {
             HostReview review = existingReview.get();
             review.setRating(updatedReview.getRating());
@@ -62,12 +62,12 @@ public class ReviewService {
         if (existingReview.isPresent()) {
             throw new IllegalArgumentException("Guest has already reviewed this accommodation.");
         }
-        // Here you should check if the guest stayed at the accommodation in the past
+        //check if the guest stayed at the accommodation in the past
         return accommodationReviewRepository.save(accommodationReview);
     }
 
     public AccommodationReview updateAccommodationReview(Long id, AccommodationReview updatedReview) {
-        Optional<AccommodationReview> existingReview = accommodationReviewRepository.findById(id);
+        Optional<AccommodationReview> existingReview = accommodationReviewRepository.findByAccommodationIdAndGuestId(id, updatedReview.getGuestId());
         if (existingReview.isPresent() && existingReview.get().getGuestId().equals(updatedReview.getGuestId())) {
             AccommodationReview review = existingReview.get();
             review.setRating(updatedReview.getRating());

@@ -20,8 +20,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@Transactional
-@Rollback
 @AutoConfigureMockMvc
 public class ReviewControllerIntegrationTest {
 
@@ -34,6 +32,8 @@ public class ReviewControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Transactional
+    @Rollback
     @Test
     public void testRateHost() throws Exception {
         HostReview hostReview = new HostReview(1L, 101L, 5, LocalDateTime.now());
@@ -45,6 +45,8 @@ public class ReviewControllerIntegrationTest {
                 .andExpect(jsonPath("$.rating").value(5));
     }
 
+    @Transactional
+    @Rollback
     @Test
     public void testGetHostReviews() throws Exception {
         HostReview hostReview = new HostReview(1L, 101L, 5, LocalDateTime.now());
@@ -54,7 +56,8 @@ public class ReviewControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].rating").value(5));
     }
-
+    @Transactional
+    @Rollback
     @Test
     public void testUpdateHostReview() throws Exception {
         HostReview hostReview = new HostReview(1L, 101L, 4, LocalDateTime.now());
@@ -68,7 +71,8 @@ public class ReviewControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rating").value(5));
     }
-
+    @Transactional
+    @Rollback
     @Test
     public void testDeleteHostReview() throws Exception {
         HostReview hostReview = new HostReview(1L, 101L, 4, LocalDateTime.now());

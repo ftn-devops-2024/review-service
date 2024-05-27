@@ -78,6 +78,5 @@ public class ReviewServiceUnitTest {
         verify(hostReviewRepository, times(1)).deleteById(1L);
     }
 
-    // Similar tests for AccommodationReview can be added here
 }
 
