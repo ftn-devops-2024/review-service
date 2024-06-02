@@ -110,20 +110,20 @@ public class ReviewControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rating").value(5));
     }
-//    @Transactional
-//    @Rollback
-//    @Test
-//    public void testDeleteHostReview() throws Exception {
-//        HostReview hostReview = new HostReview(1L, 101L, 4, LocalDateTime.now());
-//        hostReviewRepository.save(hostReview);
-//        assertTrue(hostReviewRepository.findById(1L).isPresent());
-//
-//        mockMvc.perform(delete("/reviews/host/1")
-//                        .param("guestId", "101"))
-//                .andExpect(status().isOk());
-//
-//        assertFalse(hostReviewRepository.findById(1L).isPresent());
-//    }
+    @Transactional
+    @Rollback
+    @Test
+    public void testDeleteHostReview() throws Exception {
+        HostReview hostReview = new HostReview(1L, 101L, 4, LocalDateTime.now());
+        hostReviewRepository.save(hostReview);
+        assertTrue(hostReviewRepository.findById(1L).isPresent());
+
+        mockMvc.perform(delete("/reviews/host/1")
+                        .param("guestId", "101"))
+                .andExpect(status().isOk());
+
+        assertFalse(hostReviewRepository.findById(1L).isPresent());
+    }
 
     // Similar tests for AccommodationReview can be added here
 }
