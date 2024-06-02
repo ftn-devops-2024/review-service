@@ -30,6 +30,7 @@ public class ReviewService {
 
     public HostReview updateHostReview(Long id, HostReview updatedReview) {
         Optional<HostReview> existingReview = hostReviewRepository.findByHostIdAndGuestId(id, updatedReview.getGuestId());
+        System.out.println(existingReview);
         if (existingReview.isPresent() && existingReview.get().getGuestId().equals(updatedReview.getGuestId())) {
             HostReview review = existingReview.get();
             review.setRating(updatedReview.getRating());
@@ -41,6 +42,7 @@ public class ReviewService {
 
     public void deleteHostReview(Long id, Long guestId) {
         Optional<HostReview> existingReview = hostReviewRepository.findById(id);
+        System.out.println(existingReview);
         if (existingReview.isPresent() && existingReview.get().getGuestId().equals(guestId)) {
             hostReviewRepository.deleteById(id);
         } else {
