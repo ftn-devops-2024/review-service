@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  review-database:
+    image: postgres:latest
+    container_name: review-database
+    restart: always
+    user: postgres
+    environment:
+      POSTGRES_DB: review
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_info:/var/lib/postgresql/info
+
+  review-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: review-service
+    ports:
+      - "9003:9001"
+    environment:
+      REGISTRY_SERVER: service-registry
+      DB_SERVER: review-database
+    depends_on:
+      - review-database
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container_review
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+      PGADMIN_DEFAULT_PASSWORD: test123
+    ports:
+      - "5051:80"
+
+volumes:
+  postgres_info:
