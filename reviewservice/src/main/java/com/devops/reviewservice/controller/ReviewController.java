@@ -1,10 +1,14 @@
 package com.devops.reviewservice.controller;
 
+import com.devops.reviewservice.exceptions.UnauthorizedException;
 import com.devops.reviewservice.model.AccommodationReview;
 import com.devops.reviewservice.model.HostReview;
+import com.devops.reviewservice.service.AuthService;
 import com.devops.reviewservice.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -15,19 +19,49 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private AuthService authService;
+
     @PostMapping("/host")
-    public HostReview rateHost(@RequestBody HostReview hostReview) {
-        return reviewService.rateHost(hostReview);
+    public HostReview rateHost(@RequestBody HostReview hostReview,
+                               @RequestHeader("Authorization") String authToken,
+                               @CookieValue("Fingerprint") String fingerprint) {
+        try {
+            authService.authorizeGuest(authToken, fingerprint);
+            return reviewService.rateHost(hostReview);
+        } catch (UnauthorizedException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
+        }
     }
 
     @PutMapping("/host/{id}")
-    public HostReview updateHostReview(@PathVariable Long id, @RequestBody HostReview updatedReview) {
-        return reviewService.updateHostReview(id, updatedReview);
+    public HostReview updateHostReview(@PathVariable Long id, @RequestBody HostReview updatedReview,
+                                       @RequestHeader("Authorization") String authToken,
+                                       @CookieValue("Fingerprint") String fingerprint) {
+        try {
+            authService.authorizeGuest(authToken, fingerprint);
+            return reviewService.updateHostReview(id, updatedReview);
+        } catch (UnauthorizedException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
+        }
     }
 
     @DeleteMapping("/host/{id}")
-    public void deleteHostReview(@PathVariable Long id, @RequestParam Long guestId) {
-        reviewService.deleteHostReview(id, guestId);
+    public void deleteHostReview(@PathVariable Long id, @RequestParam Long guestId,
+                                 @RequestHeader("Authorization") String authToken,
+                                 @CookieValue("Fingerprint") String fingerprint) {
+        try {
+            authService.authorizeGuest(authToken, fingerprint);
+            reviewService.deleteHostReview(id, guestId);
+        } catch (UnauthorizedException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
+        }
     }
 
     @GetMapping("/host/{hostId}")
@@ -41,18 +75,46 @@ public class ReviewController {
     }
 
     @PostMapping("/accommodation")
-    public AccommodationReview rateAccommodation(@RequestBody AccommodationReview accommodationReview) {
-        return reviewService.rateAccommodation(accommodationReview);
+    public AccommodationReview rateAccommodation(@RequestBody AccommodationReview accommodationReview,
+                                                 @RequestHeader("Authorization") String authToken,
+                                                 @CookieValue("Fingerprint") String fingerprint) {
+        try {
+            authService.authorizeGuest(authToken, fingerprint);
+            return reviewService.rateAccommodation(accommodationReview);
+        } catch (UnauthorizedException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
+        }
     }
 
     @PutMapping("/accommodation/{id}")
-    public AccommodationReview updateAccommodationReview(@PathVariable Long id, @RequestBody AccommodationReview updatedReview) {
-        return reviewService.updateAccommodationReview(id, updatedReview);
+    public AccommodationReview updateAccommodationReview(@PathVariable Long id,
+                                                         @RequestBody AccommodationReview updatedReview,
+                                                         @RequestHeader("Authorization") String authToken,
+                                                         @CookieValue("Fingerprint") String fingerprint) {
+        try {
+            authService.authorizeGuest(authToken, fingerprint);
+            return reviewService.updateAccommodationReview(id, updatedReview);
+        } catch (UnauthorizedException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
+        }
     }
 
     @DeleteMapping("/accommodation/{id}")
-    public void deleteAccommodationReview(@PathVariable Long id, @RequestParam Long guestId) {
-        reviewService.deleteAccommodationReview(id, guestId);
+    public void deleteAccommodationReview(@PathVariable Long id, @RequestParam Long guestId,
+                                          @RequestHeader("Authorization") String authToken,
+                                          @CookieValue("Fingerprint") String fingerprint) {
+        try {
+            authService.authorizeGuest(authToken, fingerprint);
+            reviewService.deleteAccommodationReview(id, guestId);
+        } catch (UnauthorizedException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
+        }
     }
 
     @GetMapping("/accommodation/{accommodationId}")
