@@ -3,15 +3,20 @@ package com.devops.reviewservice.unit;
 
 import com.devops.reviewservice.model.HostReview;
 import com.devops.reviewservice.repository.HostReviewRepository;
+import com.devops.reviewservice.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
@@ -29,10 +34,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import static org.mockito.Mockito.*;
+
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class ReviewControllerIntegrationTest {
+
+    @MockBean
+    private AuthService authService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -61,6 +71,7 @@ public class ReviewControllerIntegrationTest {
     public void setUp() {
         RestAssured.baseURI = "http://localhost:" + port;
         hostReviewRepository.deleteAll();
+        MockitoAnnotations.openMocks(this);
     }
 
     @DynamicPropertySource
@@ -75,9 +86,12 @@ public class ReviewControllerIntegrationTest {
     @Rollback
     @Test
     public void testRateHost() throws Exception {
+        when(authService.authorizeGuest(any(), any())).thenReturn(null);
         HostReview hostReview = new HostReview(1L, 101L, 5, LocalDateTime.now());
 
         mockMvc.perform(post("/reviews/host")
+                        .header("Authorization", "Bearer dummy")
+                        .cookie(new Cookie("Fingerprint", "dummy"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(hostReview)))
                 .andExpect(status().isOk())
@@ -99,12 +113,15 @@ public class ReviewControllerIntegrationTest {
     @Rollback
     @Test
     public void testUpdateHostReview() throws Exception {
+        when(authService.authorizeGuest(any(), any())).thenReturn(null);
         HostReview hostReview = new HostReview(1L, 101L, 4, LocalDateTime.now());
         hostReviewRepository.save(hostReview);
 
         hostReview.setRating(5);
 
         mockMvc.perform(put("/reviews/host/1")
+                        .header("Authorization", "Bearer dummy")
+                        .cookie(new Cookie("Fingerprint", "dummy"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(hostReview)))
                 .andExpect(status().isOk())
