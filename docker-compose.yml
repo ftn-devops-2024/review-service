@@ -26,6 +26,10 @@ services:
       REGISTRY_SERVER: service-registry
       DB_SERVER: review-database
       MANAGEMENT_METRICS_TAGS_APPLICATION: review-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
+      OTEL_SERVICE_NAME: review-service
+      OTEL_RESOURCE_ATTRIBUTES: compose_service=review-service
+      OTEL_METRICS_EXPORTER: none
     depends_on:
       - review-database
 
@@ -56,14 +60,14 @@ services:
     depends_on:
       - loki
 
-  #  tempo:
-  #    image: grafana/tempo:2.4.1
-  #    command: [ "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false" ]
-  #    ports:
-  #      - "14250:14250"
-  #      - "4317:4317"
-  #    depends_on:
-  #      - loki
+  tempo:
+    image: grafana/tempo:2.4.1
+    command: [ "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false" ]
+    ports:
+      - "14250:14250"
+      - "4317:4317"
+    depends_on:
+      - loki
 
   grafana:
     environment:
@@ -77,6 +81,8 @@ services:
       - ./etc/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - ./etc/dashboards:/etc/grafana/dashboards
       - ./etc/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+    depends_on:
+      - prometheus
 
 
 volumes:
