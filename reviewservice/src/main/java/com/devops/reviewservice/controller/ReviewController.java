@@ -7,6 +7,8 @@ import com.devops.reviewservice.model.AccommodationReview;
 import com.devops.reviewservice.model.HostReview;
 import com.devops.reviewservice.service.AuthService;
 import com.devops.reviewservice.service.ReviewService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,7 @@ public class ReviewController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    Logger logger = LoggerFactory.getLogger(ReviewService.class);
 
     @PostMapping("/host")
     public ResponseEntity<HostReview> rateHost(@RequestBody HostReview hostReview,
@@ -40,6 +43,7 @@ public class ReviewController {
             simpMessagingTemplate.convertAndSend("/notification/host-review", review);
             return ResponseEntity.ok(review);
         } catch (UnauthorizedException e) {
+            logger.error("User is not authorized.");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
@@ -54,6 +58,7 @@ public class ReviewController {
             authService.authorizeGuest(authToken, fingerprint);
             reviewService.deleteHostReview(id);
         } catch (UnauthorizedException e) {
+            logger.error("User is not authorized.");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
@@ -80,6 +85,7 @@ public class ReviewController {
             simpMessagingTemplate.convertAndSend("/notification/accommodation-review", review);
             return review;
         } catch (UnauthorizedException e) {
+            logger.error("User is not authorized.");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
@@ -94,6 +100,7 @@ public class ReviewController {
             authService.authorizeGuest(authToken, fingerprint);
             reviewService.deleteAccommodationReview(id);
         } catch (UnauthorizedException e) {
+            logger.error("User is not authorized.");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
