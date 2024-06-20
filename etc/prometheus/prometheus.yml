@@ -32,3 +32,19 @@ scrape_configs:
 
     static_configs:
       - targets: ['review-service:9003']
+
+  - job_name: 'reservation-service'
+
+    scrape_interval: 5s
+    metrics_path: "/actuator/prometheus"
+
+    static_configs:
+      - targets: [ 'reservation-service:9000' ]
+
+  - job_name: 'auth-service'
+
+    scrape_interval: 5s
+    metrics_path: "/actuator/prometheus"
+
+    static_configs:
+      - targets: [ 'auth-service:9006' ]
