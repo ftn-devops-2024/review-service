@@ -40,7 +40,6 @@ import static org.mockito.Mockito.*;
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@TestPropertySource(locations="classpath:application-test.properties")
 public class ReviewControllerIntegrationTest {
 
     @MockBean
