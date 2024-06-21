@@ -26,4 +26,5 @@
     <root level="INFO">
         <appender-ref ref="LOKI" />
     </root>
+    <logger name="org.testcontainers" level="OFF"/>
 </configuration>
