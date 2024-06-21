@@ -24,7 +24,7 @@ public class AccommodationReview {
 
     private Long accommodationId;
 
-    private Long guestId;
+    private String guestId;
 
     private int rating;
 

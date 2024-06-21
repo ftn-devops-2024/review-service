@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface AccommodationReviewRepository extends JpaRepository<AccommodationReview, Long> {
     List<AccommodationReview> findByAccommodationId(Long accommodationId);
-    Optional<AccommodationReview> findByAccommodationIdAndGuestId(Long accommodationId, Long guestId);
+    Optional<AccommodationReview> findByAccommodationIdAndGuestId(Long accommodationId, String guestId);
 }

@@ -87,7 +87,7 @@ public class ReviewControllerIntegrationTest {
     @Test
     public void testRateHost() throws Exception {
         when(authService.authorizeGuest(any(), any())).thenReturn(null);
-        HostReview hostReview = new HostReview(1L, 101L, 5, LocalDateTime.now());
+        HostReview hostReview = new HostReview("1", "101", 5, LocalDateTime.now());
 
         mockMvc.perform(post("/reviews/host")
                         .header("Authorization", "Bearer dummy")
@@ -102,7 +102,7 @@ public class ReviewControllerIntegrationTest {
     @Rollback
     @Test
     public void testGetHostReviews() throws Exception {
-        HostReview hostReview = new HostReview(1L, 101L, 5, LocalDateTime.now());
+        HostReview hostReview = new HostReview("1", "101", 5, LocalDateTime.now());
         hostReviewRepository.save(hostReview);
 
         mockMvc.perform(get("/reviews/host/1"))
@@ -114,7 +114,7 @@ public class ReviewControllerIntegrationTest {
     @Test
     public void testUpdateHostReview() throws Exception {
         when(authService.authorizeGuest(any(), any())).thenReturn(null);
-        HostReview hostReview = new HostReview(1L, 101L, 4, LocalDateTime.now());
+        HostReview hostReview = new HostReview("1", "101", 4, LocalDateTime.now());
         hostReviewRepository.save(hostReview);
 
         hostReview.setRating(5);

@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HostReviewRepository extends JpaRepository<HostReview, Long> {
-    List<HostReview> findByHostId(Long hostId);
-    Optional<HostReview> findByHostIdAndGuestId(Long hostId, Long guestId);
+    List<HostReview> findByHostId(String hostId);
+    Optional<HostReview> findByHostIdAndGuestId(String hostId, String guestId);
 }

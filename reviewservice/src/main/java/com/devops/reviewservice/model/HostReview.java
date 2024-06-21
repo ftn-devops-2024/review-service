@@ -24,15 +24,15 @@ public class HostReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long hostId;
+    private String hostId;
 
-    private Long guestId;
+    private String guestId;
 
     private int rating;
 
     private LocalDateTime date;
 
-    public HostReview(long hostId, long guestId, int rating, LocalDateTime date) {
+    public HostReview(String hostId, String guestId, int rating, LocalDateTime date) {
         this.hostId = hostId;
         this.guestId = guestId;
         this.rating = rating;

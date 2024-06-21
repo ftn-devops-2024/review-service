@@ -28,7 +28,7 @@ public class ReviewService {
         return hostReviewRepository.save(hostReview);
     }
 
-    public HostReview updateHostReview(Long id, HostReview updatedReview) {
+    public HostReview updateHostReview(String id, HostReview updatedReview) {
         Optional<HostReview> existingReview = hostReviewRepository.findByHostIdAndGuestId(id, updatedReview.getGuestId());
         System.out.println(existingReview);
         if (existingReview.isPresent() && existingReview.get().getGuestId().equals(updatedReview.getGuestId())) {
@@ -40,7 +40,7 @@ public class ReviewService {
         throw new IllegalArgumentException("Review not found or you are not authorized to update this review.");
     }
 
-    public void deleteHostReview(Long id, Long guestId) {
+    public void deleteHostReview(Long id, String guestId) {
         Optional<HostReview> existingReview = hostReviewRepository.findById(id);
         System.out.println(existingReview);
         if (existingReview.isPresent() && existingReview.get().getGuestId().equals(guestId)) {
@@ -50,11 +50,11 @@ public class ReviewService {
         }
     }
 
-    public List<HostReview> getHostReviews(Long hostId) {
+    public List<HostReview> getHostReviews(String hostId) {
         return hostReviewRepository.findByHostId(hostId);
     }
 
-    public double getAverageHostRating(Long hostId) {
+    public double getAverageHostRating(String hostId) {
         List<HostReview> reviews = hostReviewRepository.findByHostId(hostId);
         return reviews.stream().mapToInt(HostReview::getRating).average().orElse(0.0);
     }
@@ -79,7 +79,7 @@ public class ReviewService {
         throw new IllegalArgumentException("Review not found or you are not authorized to update this review.");
     }
 
-    public void deleteAccommodationReview(Long id, Long guestId) {
+    public void deleteAccommodationReview(Long id, String guestId) {
         Optional<AccommodationReview> existingReview = accommodationReviewRepository.findById(id);
         if (existingReview.isPresent() && existingReview.get().getGuestId().equals(guestId)) {
             accommodationReviewRepository.deleteById(id);
