@@ -34,8 +34,8 @@ public class ReviewServiceUnitTest {
 
     @Test
     public void testRateHost() {
-        HostReview hostReview = new HostReview(1L, 101L, 5, LocalDateTime.now());
-        when(hostReviewRepository.findByHostIdAndGuestId(1L, 101L)).thenReturn(Optional.empty());
+        HostReview hostReview = new HostReview("1", "101", 5, LocalDateTime.now());
+        when(hostReviewRepository.findByHostIdAndGuestId("1", "101")).thenReturn(Optional.empty());
         when(hostReviewRepository.save(any(HostReview.class))).thenReturn(hostReview);
 
         HostReview result = reviewService.rateHost(hostReview);
@@ -45,8 +45,8 @@ public class ReviewServiceUnitTest {
 
     @Test
     public void testRateHost_AlreadyReviewed() {
-        HostReview hostReview = new HostReview(1L, 101L, 5, LocalDateTime.now());
-        when(hostReviewRepository.findByHostIdAndGuestId(1L, 101L)).thenReturn(Optional.of(hostReview));
+        HostReview hostReview = new HostReview("1", "101", 5, LocalDateTime.now());
+        when(hostReviewRepository.findByHostIdAndGuestId("1", "101")).thenReturn(Optional.of(hostReview));
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             reviewService.rateHost(hostReview);
@@ -71,10 +71,10 @@ public class ReviewServiceUnitTest {
 
     @Test
     public void testDeleteHostReview() {
-        HostReview existingReview = new HostReview(1L, 101L, 4, LocalDateTime.now());
+        HostReview existingReview = new HostReview("1", "101", 4, LocalDateTime.now());
         when(hostReviewRepository.findById(1L)).thenReturn(Optional.of(existingReview));
 
-        reviewService.deleteHostReview(1L, 101L);
+        reviewService.deleteHostReview(1L, "101");
         verify(hostReviewRepository, times(1)).deleteById(1L);
     }
 

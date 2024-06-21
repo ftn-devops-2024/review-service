@@ -7,6 +7,8 @@ import com.devops.reviewservice.service.AuthService;
 import com.devops.reviewservice.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,13 +24,19 @@ public class ReviewController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+
     @PostMapping("/host")
-    public HostReview rateHost(@RequestBody HostReview hostReview,
-                               @RequestHeader("Authorization") String authToken,
-                               @CookieValue("Fingerprint") String fingerprint) {
+    public ResponseEntity<HostReview> rateHost(@RequestBody HostReview hostReview,
+                                              @RequestHeader("Authorization") String authToken,
+                                              @CookieValue("Fingerprint") String fingerprint) {
         try {
             authService.authorizeGuest(authToken, fingerprint);
-            return reviewService.rateHost(hostReview);
+            HostReview review = reviewService.rateHost(hostReview);
+            simpMessagingTemplate.convertAndSend("/notification/host-review", review);
+            return ResponseEntity.ok(review);
         } catch (UnauthorizedException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
@@ -37,12 +45,14 @@ public class ReviewController {
     }
 
     @PutMapping("/host/{id}")
-    public HostReview updateHostReview(@PathVariable Long id, @RequestBody HostReview updatedReview,
+    public ResponseEntity<HostReview> updateHostReview(@PathVariable String id, @RequestBody HostReview updatedReview,
                                        @RequestHeader("Authorization") String authToken,
                                        @CookieValue("Fingerprint") String fingerprint) {
         try {
             authService.authorizeGuest(authToken, fingerprint);
-            return reviewService.updateHostReview(id, updatedReview);
+            HostReview review = reviewService.updateHostReview(id, updatedReview);
+            simpMessagingTemplate.convertAndSend("/notification/host-review", review);
+            return ResponseEntity.ok(review);
         } catch (UnauthorizedException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
@@ -51,7 +61,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/host/{id}")
-    public void deleteHostReview(@PathVariable Long id, @RequestParam Long guestId,
+    public void deleteHostReview(@PathVariable Long id, @RequestParam String guestId,
                                  @RequestHeader("Authorization") String authToken,
                                  @CookieValue("Fingerprint") String fingerprint) {
         try {
@@ -65,12 +75,12 @@ public class ReviewController {
     }
 
     @GetMapping("/host/{hostId}")
-    public List<HostReview> getHostReviews(@PathVariable Long hostId) {
-        return reviewService.getHostReviews(hostId);
+    public ResponseEntity<List<HostReview>> getHostReviews(@PathVariable String hostId) {
+        return ResponseEntity.ok(reviewService.getHostReviews(hostId));
     }
 
     @GetMapping("/host/average/{hostId}")
-    public double getAverageHostRating(@PathVariable Long hostId) {
+    public double getAverageHostRating(@PathVariable String hostId) {
         return reviewService.getAverageHostRating(hostId);
     }
 
@@ -80,7 +90,9 @@ public class ReviewController {
                                                  @CookieValue("Fingerprint") String fingerprint) {
         try {
             authService.authorizeGuest(authToken, fingerprint);
-            return reviewService.rateAccommodation(accommodationReview);
+            AccommodationReview review = reviewService.rateAccommodation(accommodationReview);
+            simpMessagingTemplate.convertAndSend("/notification/accommodation-review", review);
+            return review;
         } catch (UnauthorizedException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
@@ -95,7 +107,9 @@ public class ReviewController {
                                                          @CookieValue("Fingerprint") String fingerprint) {
         try {
             authService.authorizeGuest(authToken, fingerprint);
-            return reviewService.updateAccommodationReview(id, updatedReview);
+            AccommodationReview review = reviewService.updateAccommodationReview(id, updatedReview);
+            simpMessagingTemplate.convertAndSend("/notification/accommodation-review", review);
+            return review;
         } catch (UnauthorizedException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
@@ -104,7 +118,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/accommodation/{id}")
-    public void deleteAccommodationReview(@PathVariable Long id, @RequestParam Long guestId,
+    public void deleteAccommodationReview(@PathVariable Long id, @RequestParam String guestId,
                                           @RequestHeader("Authorization") String authToken,
                                           @CookieValue("Fingerprint") String fingerprint) {
         try {
