@@ -5,9 +5,13 @@
         </encoder>
     </appender>
 
-    <root level="OFF">
+    <root level="ERROR">
         <appender-ref ref="STDOUT"/>
     </root>
 
     <logger name="org.testcontainers" level="OFF"/>
+    <!-- The following logger can be used for containers logs since 1.18.0 -->
+    <logger name="tc" level="OFF"/>
+    <logger name="com.github.dockerjava" level="WARN"/>
+    <logger name="com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.wire" level="OFF"/>
 </configuration>
