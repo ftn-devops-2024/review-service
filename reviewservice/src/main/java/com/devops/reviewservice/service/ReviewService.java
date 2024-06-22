@@ -30,10 +30,10 @@ public class ReviewService {
         }
     }
 
-    public void deleteHostReview(Long id, String guestId) {
+    public void deleteHostReview(Long id) {
         Optional<HostReview> existingReview = hostReviewRepository.findById(id);
         System.out.println(existingReview);
-        if (existingReview.isPresent() && existingReview.get().getGuestId().equals(guestId)) {
+        if (existingReview.isPresent()) {
             hostReviewRepository.deleteById(id);
         } else {
             throw new IllegalArgumentException("Review not found or you are not authorized to delete this review.");
@@ -59,9 +59,9 @@ public class ReviewService {
         }
     }
 
-    public void deleteAccommodationReview(Long id, String guestId) {
+    public void deleteAccommodationReview(Long id) {
         Optional<AccommodationReview> existingReview = accommodationReviewRepository.findById(id);
-        if (existingReview.isPresent() && existingReview.get().getGuestId().equals(guestId)) {
+        if (existingReview.isPresent()) {
             accommodationReviewRepository.deleteById(id);
         } else {
             throw new IllegalArgumentException("Review not found or you are not authorized to delete this review.");

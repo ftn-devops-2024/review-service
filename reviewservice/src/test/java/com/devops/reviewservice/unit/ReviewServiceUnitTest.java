@@ -61,7 +61,7 @@ public class ReviewServiceUnitTest {
         HostReview existingReview = new HostReview("1", "101", 4, LocalDateTime.now());
         when(hostReviewRepository.findById(1L)).thenReturn(Optional.of(existingReview));
 
-        reviewService.deleteHostReview(1L, "101");
+        reviewService.deleteHostReview(1L);
         verify(hostReviewRepository, times(1)).deleteById(1L);
     }
 

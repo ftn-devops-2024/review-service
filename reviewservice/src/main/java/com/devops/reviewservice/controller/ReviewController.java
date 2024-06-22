@@ -47,12 +47,12 @@ public class ReviewController {
     }
 
     @DeleteMapping("/host/{id}")
-    public void deleteHostReview(@PathVariable Long id, @RequestParam String guestId,
+    public void deleteHostReview(@PathVariable Long id,
                                  @RequestHeader("Authorization") String authToken,
                                  @CookieValue("Fingerprint") String fingerprint) {
         try {
             authService.authorizeGuest(authToken, fingerprint);
-            reviewService.deleteHostReview(id, guestId);
+            reviewService.deleteHostReview(id);
         } catch (UnauthorizedException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
@@ -87,12 +87,12 @@ public class ReviewController {
     }
 
     @DeleteMapping("/accommodation/{id}")
-    public void deleteAccommodationReview(@PathVariable Long id, @RequestParam String guestId,
+    public void deleteAccommodationReview(@PathVariable Long id,
                                           @RequestHeader("Authorization") String authToken,
                                           @CookieValue("Fingerprint") String fingerprint) {
         try {
             authService.authorizeGuest(authToken, fingerprint);
-            reviewService.deleteAccommodationReview(id, guestId);
+            reviewService.deleteAccommodationReview(id);
         } catch (UnauthorizedException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
         } catch (RuntimeException e) {
