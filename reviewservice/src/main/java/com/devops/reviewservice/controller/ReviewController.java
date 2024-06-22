@@ -1,5 +1,7 @@
 package com.devops.reviewservice.controller;
 
+import com.devops.reviewservice.dto.UserAccommodationDTO;
+import com.devops.reviewservice.dto.UserHostDTO;
 import com.devops.reviewservice.exceptions.UnauthorizedException;
 import com.devops.reviewservice.model.AccommodationReview;
 import com.devops.reviewservice.model.HostReview;
@@ -35,22 +37,6 @@ public class ReviewController {
         try {
             authService.authorizeGuest(authToken, fingerprint);
             HostReview review = reviewService.rateHost(hostReview);
-            simpMessagingTemplate.convertAndSend("/notification/host-review", review);
-            return ResponseEntity.ok(review);
-        } catch (UnauthorizedException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
-        }
-    }
-
-    @PutMapping("/host/{id}")
-    public ResponseEntity<HostReview> updateHostReview(@PathVariable String id, @RequestBody HostReview updatedReview,
-                                       @RequestHeader("Authorization") String authToken,
-                                       @CookieValue("Fingerprint") String fingerprint) {
-        try {
-            authService.authorizeGuest(authToken, fingerprint);
-            HostReview review = reviewService.updateHostReview(id, updatedReview);
             simpMessagingTemplate.convertAndSend("/notification/host-review", review);
             return ResponseEntity.ok(review);
         } catch (UnauthorizedException e) {
@@ -100,23 +86,6 @@ public class ReviewController {
         }
     }
 
-    @PutMapping("/accommodation/{id}")
-    public AccommodationReview updateAccommodationReview(@PathVariable Long id,
-                                                         @RequestBody AccommodationReview updatedReview,
-                                                         @RequestHeader("Authorization") String authToken,
-                                                         @CookieValue("Fingerprint") String fingerprint) {
-        try {
-            authService.authorizeGuest(authToken, fingerprint);
-            AccommodationReview review = reviewService.updateAccommodationReview(id, updatedReview);
-            simpMessagingTemplate.convertAndSend("/notification/accommodation-review", review);
-            return review;
-        } catch (UnauthorizedException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized", e);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
-        }
-    }
-
     @DeleteMapping("/accommodation/{id}")
     public void deleteAccommodationReview(@PathVariable Long id, @RequestParam String guestId,
                                           @RequestHeader("Authorization") String authToken,
@@ -139,5 +108,15 @@ public class ReviewController {
     @GetMapping("/accommodation/average/{accommodationId}")
     public double getAverageAccommodationRating(@PathVariable Long accommodationId) {
         return reviewService.getAverageAccommodationRating(accommodationId);
+    }
+
+    @GetMapping("/host/user/")
+    public ResponseEntity<HostReview> getUserHostReview(@RequestBody UserHostDTO dto) {
+        return ResponseEntity.ok(reviewService.getUserHostReview(dto.getUserId(), dto.getHostId()));
+    }
+
+    @GetMapping("/accomodation/user/")
+    public ResponseEntity<AccommodationReview> getUserAccommodationReview(@RequestBody UserAccommodationDTO dto) {
+        return ResponseEntity.ok(reviewService.getUserAccommodationReview(dto.getUserId(), dto.getAccommodationId()));
     }
 }
