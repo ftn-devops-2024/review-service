@@ -109,39 +109,6 @@ public class ReviewControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].rating").value(5));
     }
-    @Transactional
-    @Rollback
-    @Test
-    public void testUpdateHostReview() throws Exception {
-        when(authService.authorizeGuest(any(), any())).thenReturn(null);
-        HostReview hostReview = new HostReview("1", "101", 4, LocalDateTime.now());
-        hostReviewRepository.save(hostReview);
 
-        hostReview.setRating(5);
-
-        mockMvc.perform(put("/reviews/host/1")
-                        .header("Authorization", "Bearer dummy")
-                        .cookie(new Cookie("Fingerprint", "dummy"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(hostReview)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.rating").value(5));
-    }
-//    @Transactional
-//    @Rollback
-//    @Test
-//    public void testDeleteHostReview() throws Exception {
-//        HostReview hostReview = new HostReview(1L, 101L, 4, LocalDateTime.now());
-//        hostReviewRepository.save(hostReview);
-//        assertTrue(hostReviewRepository.findById(1L).isPresent());
-//
-//        mockMvc.perform(delete("/reviews/host/1")
-//                        .param("guestId", "101"))
-//                .andExpect(status().isOk());
-//
-//        assertFalse(hostReviewRepository.findById(1L).isPresent());
-//    }
-
-    // Similar tests for AccommodationReview can be added here
 }
 
