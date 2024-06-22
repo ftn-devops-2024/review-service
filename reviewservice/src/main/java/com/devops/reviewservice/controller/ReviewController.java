@@ -110,12 +110,12 @@ public class ReviewController {
         return reviewService.getAverageAccommodationRating(accommodationId);
     }
 
-    @GetMapping("/host/user/")
+    @PostMapping("/host/user/")
     public ResponseEntity<HostReview> getUserHostReview(@RequestBody UserHostDTO dto) {
         return ResponseEntity.ok(reviewService.getUserHostReview(dto.getUserId(), dto.getHostId()));
     }
 
-    @GetMapping("/accomodation/user/")
+    @PostMapping("/accomodation/user/")
     public ResponseEntity<AccommodationReview> getUserAccommodationReview(@RequestBody UserAccommodationDTO dto) {
         return ResponseEntity.ok(reviewService.getUserAccommodationReview(dto.getUserId(), dto.getAccommodationId()));
     }
