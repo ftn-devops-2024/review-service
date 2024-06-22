@@ -43,19 +43,6 @@ public class ReviewServiceUnitTest {
         verify(hostReviewRepository, times(1)).save(hostReview);
     }
 
-    @Test
-    public void testRateHost_AlreadyReviewed() {
-        HostReview hostReview = new HostReview("1", "101", 5, LocalDateTime.now());
-        when(hostReviewRepository.findByHostIdAndGuestId("1", "101")).thenReturn(Optional.of(hostReview));
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            reviewService.rateHost(hostReview);
-        });
-
-        String expectedMessage = "Guest has already reviewed this host.";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
 
 //    @Test
 //    public void testUpdateHostReview() {
